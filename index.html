@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Al-Jabr: House of Wisdom</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-gold: #f59e0b;
+      --accent-teal: #14b8a6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Fixed Top Header */
+    header {
+      background: #020617;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-gold);
+    }
+
+    .resource-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .resource-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .resource-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .resource-value {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--accent-gold);
+    }
+
+    .kp-val {
+      color: var(--accent-teal);
+    }
+
+    /* Main Viewport Container */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      padding-bottom: 80px; /* Space for bottom nav */
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Tap Action Area */
+    .tap-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .transcribe-btn {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #334155 0%, #1e293b 100%);
+      border: 4px solid var(--accent-teal);
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(20, 184, 166, 0.3);
+      cursor: pointer;
+      transition: transform 0.05s ease;
+    }
+
+    .transcribe-btn:active {
+      transform: scale(0.92);
+      border-color: var(--accent-gold);
+    }
+
+    /* Card System */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-info h4 {
+      font-size: 15px;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .card-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .action-btn {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .action-btn:disabled {
+      background: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    /* Bottom Mobile Navigation */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: #020617;
+      display: flex;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      color: var(--accent-gold);
+      border-top: 2px solid var(--accent-gold);
+    }
+
+    .nav-icon {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header>
+    <div class="resource-group">
+      <div class="resource-item">
+        <span class="resource-label">Gold</span>
+        <span id="gold-display" class="resource-value">100</span>
+      </div>
+      <div class="resource-item">
+        <span class="resource-label">Knowledge</span>
+        <span id="kp-display" class="resource-value kp-val">0</span>
+      </div>
+    </div>
+    <div class="resource-item" style="align-items: flex-end;">
+      <span class="resource-label">Rate</span>
+      <span id="rate-display" class="resource-value" style="font-size: 13px; color: var(--text-main);">0 KP/s</span>
+    </div>
+  </header>
+
+  <!-- Main Screen Content -->
+  <main>
+    <!-- TAB 1: ACADEMY (Main/Tap) -->
+    <section id="tab-academy" class="tab-content active">
+      <div class="tap-container">
+        <button id="tap-btn" class="transcribe-btn">
+          <span>📜</span>
+          <span>Transcribe</span>
+        </button>
+      </div>
+      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Library Stats</h3>
+      <div class="card">
+        <div class="card-info">
+          <h4>Caliph's Patronage</h4>
+          <p>Collect yearly stipend from Baghdad</p>
+        </div>
+        <button id="stipend-btn" class="action-btn">Claim +50 Gold</button>
+      </div>
+    </section>
+
+    <!-- TAB 2: SCHOLARS -->
+    <section id="tab-scholars" class="tab-content">
+      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Recruit Scholars</h3>
+      
+      <div class="card">
+        <div class="card-info">
+          <h4>Scribe Apprentice</h4>
+          <p>Produces +1 KP/sec</p>
+        </div>
+        <button id="buy-scribe" class="action-btn">Hire (15 Gold)</button>
+      </div>
+
+      <div class="card">
+        <div class="card-info">
+          <h4>Polymath (Al-Khwarizmi)</h4>
+          <p>Produces +5 KP/sec</p>
+        </div>
+        <button id="buy-polymath" class="action-btn">Hire (75 Gold)</button>
+      </div>
+    </section>
+
+    <!-- TAB 3: DISCOVERIES -->
+    <section id="tab-discoveries" class="tab-content">
+      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Innovation Tree</h3>
+
+      <div class="card">
+        <div class="card-info">
+          <h4>Algebra (Al-Jabr)</h4>
+          <p>Unlocks higher research tiers</p>
+        </div>
+        <button id="tech-algebra" class="action-btn">Study (50 KP)</button>
+      </div>
+
+      <div class="card">
+        <div class="card-info">
+          <h4>Astrolabe Precision</h4>
+          <p>Increases stipend gold by 2x</p>
+        </div>
+        <button id="tech-astrolabe" class="action-btn">Study (150 KP)</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Mobile Nav -->
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('academy', this)">
+      <span class="nav-icon">🏛️</span>
+      <span>Academy</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('scholars', this)">
+      <span class="nav-icon">👳‍♂️</span>
+      <span>Scholars</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('discoveries', this)">
+      <span class="nav-icon">💡</span>
+      <span>Inventions</span>
+    </button>
+  </nav>
+
+  <script>
+    // Game State
+    let state = {
+      gold: 100,
+      kp: 0,
+      kpPerSec: 0,
+      scribes: 0,
+      polymaths: 0,
+      stipendMultiplier: 1
+    };
+
+    // DOM Elements
+    const goldDisplay = document.getElementById('gold-display');
+    const kpDisplay = document.getElementById('kp-display');
+    const rateDisplay = document.getElementById('rate-display');
+
+    // Tab Navigation
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Manual Tap Action
+    document.getElementById('tap-btn').addEventListener('click', () => {
+      state.kp += 1;
+      updateUI();
+    });
+
+    // Claim Stipend
+    document.getElementById('stipend-btn').addEventListener('click', (e) => {
+      state.gold += 50 * state.stipendMultiplier;
+      e.target.disabled = true;
+      e.target.innerText = "Waiting...";
+      setTimeout(() => {
+        e.target.disabled = false;
+        e.target.innerText = `Claim +${50 * state.stipendMultiplier} Gold`;
+      }, 5000);
+      updateUI();
+    });
+
+    // Hire Scribe
+    document.getElementById('buy-scribe').addEventListener('click', () => {
+      if (state.gold >= 15) {
+        state.gold -= 15;
+        state.scribes += 1;
+        state.kpPerSec += 1;
+        updateUI();
+      }
+    });
+
+    // Hire Polymath
+    document.getElementById('buy-polymath').addEventListener('click', () => {
+      if (state.gold >= 75) {
+        state.gold -= 75;
+        state.polymaths += 1;
+        state.kpPerSec += 5;
+        updateUI();
+      }
+    });
+
+    // Tech Unlocks
+    document.getElementById('tech-algebra').addEventListener('click', (e) => {
+      if (state.kp >= 50) {
+        state.kp -= 50;
+        e.target.disabled = true;
+        e.target.innerText = "Researched";
+        updateUI();
+      }
+    });
+
+    document.getElementById('tech-astrolabe').addEventListener('click', (e) => {
+      if (state.kp >= 150) {
+        state.kp -= 150;
+        state.stipendMultiplier = 2;
+        e.target.disabled = true;
+        e.target.innerText = "Researched";
+        updateUI();
+      }
+    });
+
+    // Main Game Loop (1 second tick)
+    setInterval(() => {
+      state.kp += state.kpPerSec;
+      updateUI();
+    }, 1000);
+
+    // Dynamic UI Refresh
+    function updateUI() {
+      goldDisplay.innerText = state.gold;
+      kpDisplay.innerText = state.kp;
+      rateDisplay.innerText = `${state.kpPerSec} KP/s`;
+
+      // Enable/disable buttons based on affordable cost
+      document.getElementById('buy-scribe').disabled = state.gold < 15;
+      document.getElementById('buy-polymath').disabled = state.gold < 75;
+    }
+
+    // Initial load
+    updateUI();
+  </script>
+</body>
+</html>
