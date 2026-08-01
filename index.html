@@ -36,7 +36,6 @@
       overflow: hidden;
     }
 
-    /* Fixed Top Header */
     header {
       background: #020617;
       padding: 12px 16px;
@@ -74,12 +73,11 @@
       color: var(--accent-teal);
     }
 
-    /* Main Viewport Container */
     main {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
-      padding-bottom: 80px; /* Space for bottom nav */
+      padding-bottom: 80px;
     }
 
     .tab-content {
@@ -90,7 +88,6 @@
       display: block;
     }
 
-    /* Tap Action Area */
     .tap-container {
       display: flex;
       flex-direction: column;
@@ -100,13 +97,13 @@
     }
 
     .transcribe-btn {
-      width: 140px;
-      height: 140px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
       background: radial-gradient(circle, #334155 0%, #1e293b 100%);
       border: 4px solid var(--accent-teal);
       color: var(--text-main);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       display: flex;
       flex-direction: column;
@@ -122,7 +119,6 @@
       border-color: var(--accent-gold);
     }
 
-    /* Card System */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -162,6 +158,42 @@
       cursor: not-allowed;
     }
 
+    /* Puzzle Container Styles */
+    .puzzle-box {
+      background: #020617;
+      border: 1px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .puzzle-equation {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--accent-gold);
+      margin: 12px 0;
+      letter-spacing: 2px;
+    }
+
+    .puzzle-input-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .puzzle-input {
+      width: 80px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+    }
+
     /* Bottom Mobile Navigation */
     nav {
       position: fixed;
@@ -183,7 +215,7 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 10px;
       gap: 4px;
       cursor: pointer;
     }
@@ -220,7 +252,7 @@
 
   <!-- Main Screen Content -->
   <main>
-    <!-- TAB 1: ACADEMY (Main/Tap) -->
+    <!-- TAB 1: ACADEMY -->
     <section id="tab-academy" class="tab-content active">
       <div class="tap-container">
         <button id="tap-btn" class="transcribe-btn">
@@ -228,7 +260,7 @@
           <span>Transcribe</span>
         </button>
       </div>
-      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Library Stats</h3>
+      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Library Operations</h3>
       <div class="card">
         <div class="card-info">
           <h4>Caliph's Patronage</h4>
@@ -238,35 +270,50 @@
       </div>
     </section>
 
-    <!-- TAB 2: SCHOLARS -->
+    <!-- TAB 2: TRANSLATION MINI-GAME -->
+    <section id="tab-translate" class="tab-content">
+      <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Decipher Manuscripts</h3>
+      
+      <div class="puzzle-box">
+        <span style="font-size: 12px; color: var(--text-muted);">Solve Al-Jabr Equation for $x$:</span>
+        <div id="puzzle-equation" class="puzzle-equation">2x + 4 = 10</div>
+        <div class="puzzle-input-group">
+          <input type="number" id="puzzle-answer" class="puzzle-input" placeholder="x = ?" />
+          <button id="submit-puzzle" class="action-btn">Submit</button>
+        </div>
+        <div id="puzzle-feedback" style="font-size: 12px; margin-top: 8px; height: 16px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SCHOLARS -->
     <section id="tab-scholars" class="tab-content">
       <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Recruit Scholars</h3>
       
       <div class="card">
         <div class="card-info">
-          <h4>Scribe Apprentice</h4>
+          <h4>Scribe Apprentice (<span id="count-scribes">0</span>)</h4>
           <p>Produces +1 KP/sec</p>
         </div>
-        <button id="buy-scribe" class="action-btn">Hire (15 Gold)</button>
+        <button id="buy-scribe" class="action-btn">Hire (<span id="cost-scribe">15</span> G)</button>
       </div>
 
       <div class="card">
         <div class="card-info">
-          <h4>Polymath (Al-Khwarizmi)</h4>
+          <h4>Polymath (<span id="count-polymaths">0</span>)</h4>
           <p>Produces +5 KP/sec</p>
         </div>
-        <button id="buy-polymath" class="action-btn">Hire (75 Gold)</button>
+        <button id="buy-polymath" class="action-btn">Hire (<span id="cost-polymath">75</span> G)</button>
       </div>
     </section>
 
-    <!-- TAB 3: DISCOVERIES -->
+    <!-- TAB 4: DISCOVERIES -->
     <section id="tab-discoveries" class="tab-content">
       <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted); text-transform: uppercase;">Innovation Tree</h3>
 
       <div class="card">
         <div class="card-info">
           <h4>Algebra (Al-Jabr)</h4>
-          <p>Unlocks higher research tiers</p>
+          <p>Boosts transcribe yield to +2 KP</p>
         </div>
         <button id="tech-algebra" class="action-btn">Study (50 KP)</button>
       </div>
@@ -281,11 +328,15 @@
     </section>
   </main>
 
-  <!-- Bottom Mobile Nav -->
+  <!-- Bottom Navigation -->
   <nav>
     <button class="nav-btn active" onclick="switchTab('academy', this)">
       <span class="nav-icon">🏛️</span>
       <span>Academy</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('translate', this)">
+      <span class="nav-icon">📜</span>
+      <span>Translate</span>
     </button>
     <button class="nav-btn" onclick="switchTab('scholars', this)">
       <span class="nav-icon">👳‍♂️</span>
@@ -305,15 +356,37 @@
       kpPerSec: 0,
       scribes: 0,
       polymaths: 0,
-      stipendMultiplier: 1
+      tapYield: 1,
+      stipendMultiplier: 1,
+      hasAlgebra: false,
+      hasAstrolabe: false
     };
 
-    // DOM Elements
+    let currentPuzzle = { a: 2, b: 4, x: 3 };
+
+    // DOM References
     const goldDisplay = document.getElementById('gold-display');
     const kpDisplay = document.getElementById('kp-display');
     const rateDisplay = document.getElementById('rate-display');
 
-    // Tab Navigation
+    // LocalStorage Auto-Save / Load
+    function loadGame() {
+      const saved = localStorage.getItem('al_jabr_save');
+      if (saved) {
+        state = { ...state, ...JSON.parse(saved) };
+      }
+      recalculateRates();
+    }
+
+    function saveGame() {
+      localStorage.setItem('al_jabr_save', JSON.stringify(state));
+    }
+
+    function recalculateRates() {
+      state.kpPerSec = (state.scribes * 1) + (state.polymaths * 5);
+    }
+
+    // Navigation
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -322,84 +395,147 @@
       btn.classList.add('active');
     }
 
-    // Manual Tap Action
+    // Manual Transcribe
     document.getElementById('tap-btn').addEventListener('click', () => {
-      state.kp += 1;
+      state.kp += state.tapYield;
       updateUI();
     });
 
     // Claim Stipend
     document.getElementById('stipend-btn').addEventListener('click', (e) => {
-      state.gold += 50 * state.stipendMultiplier;
+      const reward = 50 * state.stipendMultiplier;
+      state.gold += reward;
       e.target.disabled = true;
       e.target.innerText = "Waiting...";
       setTimeout(() => {
         e.target.disabled = false;
-        e.target.innerText = `Claim +${50 * state.stipendMultiplier} Gold`;
+        e.target.innerText = `Claim +${reward} Gold`;
       }, 5000);
       updateUI();
     });
 
     // Hire Scribe
     document.getElementById('buy-scribe').addEventListener('click', () => {
-      if (state.gold >= 15) {
-        state.gold -= 15;
+      const cost = Math.floor(15 * Math.pow(1.15, state.scribes));
+      if (state.gold >= cost) {
+        state.gold -= cost;
         state.scribes += 1;
-        state.kpPerSec += 1;
+        recalculateRates();
         updateUI();
       }
     });
 
     // Hire Polymath
     document.getElementById('buy-polymath').addEventListener('click', () => {
-      if (state.gold >= 75) {
-        state.gold -= 75;
+      const cost = Math.floor(75 * Math.pow(1.15, state.polymaths));
+      if (state.gold >= cost) {
+        state.gold -= cost;
         state.polymaths += 1;
-        state.kpPerSec += 5;
+        recalculateRates();
         updateUI();
       }
     });
 
     // Tech Unlocks
     document.getElementById('tech-algebra').addEventListener('click', (e) => {
-      if (state.kp >= 50) {
+      if (state.kp >= 50 && !state.hasAlgebra) {
         state.kp -= 50;
-        e.target.disabled = true;
-        e.target.innerText = "Researched";
+        state.hasAlgebra = true;
+        state.tapYield = 2;
         updateUI();
       }
     });
 
     document.getElementById('tech-astrolabe').addEventListener('click', (e) => {
-      if (state.kp >= 150) {
+      if (state.kp >= 150 && !state.hasAstrolabe) {
         state.kp -= 150;
+        state.hasAstrolabe = true;
         state.stipendMultiplier = 2;
-        e.target.disabled = true;
-        e.target.innerText = "Researched";
         updateUI();
       }
     });
 
-    // Main Game Loop (1 second tick)
+    // Translation Mini-Game Generator
+    function generatePuzzle() {
+      const a = Math.floor(Math.random() * 5) + 2; // 2 to 6
+      const x = Math.floor(Math.random() * 8) + 1; // 1 to 8
+      const b = Math.floor(Math.random() * 10) + 1; // 1 to 10
+      const c = (a * x) + b;
+
+      currentPuzzle = { a, b, c, x };
+      document.getElementById('puzzle-equation').innerText = `${a}x + ${b} = ${c}`;
+      document.getElementById('puzzle-answer').value = '';
+    }
+
+    document.getElementById('submit-puzzle').addEventListener('click', () => {
+      const ansInput = parseInt(document.getElementById('puzzle-answer').value);
+      const feedback = document.getElementById('puzzle-feedback');
+
+      if (ansInput === currentPuzzle.x) {
+        const kpReward = 20;
+        const goldReward = 15;
+        state.kp += kpReward;
+        state.gold += goldReward;
+
+        feedback.style.color = '#14b8a6';
+        feedback.innerText = `Correct! +${kpReward} KP & +${goldReward} Gold`;
+        generatePuzzle();
+      } else {
+        feedback.style.color = '#ef4444';
+        feedback.innerText = 'Incorrect translation. Try again!';
+      }
+      updateUI();
+    });
+
+    // Main Game Tick
     setInterval(() => {
       state.kp += state.kpPerSec;
       updateUI();
     }, 1000);
 
-    // Dynamic UI Refresh
+    // Auto-Save every 5 seconds
+    setInterval(saveGame, 5000);
+
+    // UI Updates
     function updateUI() {
       goldDisplay.innerText = state.gold;
       kpDisplay.innerText = state.kp;
       rateDisplay.innerText = `${state.kpPerSec} KP/s`;
 
-      // Enable/disable buttons based on affordable cost
-      document.getElementById('buy-scribe').disabled = state.gold < 15;
-      document.getElementById('buy-polymath').disabled = state.gold < 75;
+      // Scribe & Polymath Costs
+      const scribeCost = Math.floor(15 * Math.pow(1.15, state.scribes));
+      const polymathCost = Math.floor(75 * Math.pow(1.15, state.polymaths));
+
+      document.getElementById('count-scribes').innerText = state.scribes;
+      document.getElementById('cost-scribe').innerText = scribeCost;
+      document.getElementById('buy-scribe').disabled = state.gold < scribeCost;
+
+      document.getElementById('count-polymaths').innerText = state.polymaths;
+      document.getElementById('cost-polymath').innerText = polymathCost;
+      document.getElementById('buy-polymath').disabled = state.gold < polymathCost;
+
+      // Tech Tree States
+      const algBtn = document.getElementById('tech-algebra');
+      if (state.hasAlgebra) {
+        algBtn.innerText = "Researched";
+        algBtn.disabled = true;
+      } else {
+        algBtn.disabled = state.kp < 50;
+      }
+
+      const astroBtn = document.getElementById('tech-astrolabe');
+      if (state.hasAstrolabe) {
+        astroBtn.innerText = "Researched";
+        astroBtn.disabled = true;
+      } else {
+        astroBtn.disabled = state.kp < 150;
+      }
     }
 
-    // Initial load
+    // Init Game
+    loadGame();
+    generatePuzzle();
     updateUI();
-    
   </script>
 </body>
 </html>
